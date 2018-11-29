@@ -20,37 +20,49 @@ var companySalesData = [
     sales: [ 500, 100 ]
   }
 ];
+
 function calculateSalesTax(salesData, taxRates) {
-  // Implement your code here
   var report = {};
-  var sumSales = 0;
+
+  //loop thru sales and sum up
+  function forLoop(salesD){
+    var summ = 0;
+    for (var j = 0; j < salesD.sales.length; j++){
+        summ += salesD.sales[j];
+    }
+    return summ;
+  }
+
+  //create report's keys and add values
+  function totalAdd(reportT, salesD, taxR, check){
+    if (check){
+      reportT.totalSales = forLoop(salesD);
+      reportT.totalTaxes = forLoop(salesD) * taxR;
+    } else {
+      reportT.totalSales += forLoop(salesD);
+      reportT.totalTaxes += forLoop(salesD) * taxR;
+    }
+
+  }
+
   //iterate thru salesData
   for (var i = 0; i < salesData.length; i++){
     //check for duplicate company name
     if (!report[salesData[i].name]){
       report[salesData[i].name] = {};
-      //loop thru sales and sum
-      for (var j = 0; j < salesData[i].sales.length; j++){
-        sumSales += salesData[i].sales[j];
-      }
-      report[salesData[i].name].totalSales = sumSales;
-      var province = salesData[i].province;
-      report[salesData[i].name].totalTaxes = sumSales * taxRates[province];
-      sumSales = 0;
+      totalAdd(report[salesData[i].name], salesData[i], taxRates[salesData[i].province], true);
     }
     else {
-      for (var j = 0; j < salesData[i].sales.length; j++){
-        sumSales += salesData[i].sales[j];
-      }
-      report[salesData[i].name].totalSales += sumSales;
-      var province = salesData[i].province;
-      report[salesData[i].name].totalTaxes += sumSales * taxRates[province];
-      sumSales = 0;
+      totalAdd(report[salesData[i].name], salesData[i], taxRates[salesData[i].province], false);
     }
   }
-  console.log(report);
+  return report;
 }
+
 var results = calculateSalesTax(companySalesData, salesTaxRates);
+
+console.log(results);
+
 /* Expected Results:
 {
   Telus: {
